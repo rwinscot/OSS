@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+	creationComplete="ccomp();" 
+	layout="absolute"
+	backgroundGradientAlphas="[1.0, 1.0]" backgroundGradientColors="[#FFFFFF, #FFEDDC]">
+
+	<mx:Script>
+		<![CDATA[
+
+
+			import mx.controls.Alert;
+
+			import com.quilix.managers.ComponentSecurityManager;
+
+		
+			/**
+			 * @private
+			 * Binding source for the 'can click' permission.
+			 */
+			[Bindable]
+			private var _canClickMe:Boolean = false;
+			
+			/**
+			 * @private
+			 * Constant for the 'can click' permission.
+			 */
+			private const CAN_CLICK_ME:String = "canClickMe";
+			
+			
+			/**
+			 * @private
+			 * Security manager for this application context.
+			 */
+			private var csm:ComponentSecurityManager;
+			
+			
+			
+			/**
+			 * @private
+			 * Handles creationComplete event - and sets up security.
+			 */
+			private function ccomp():void
+			{
+				csm = ComponentSecurityManager.getInstance();
+				csm.addEventListener("permissionsUpdated", handlePermissionsUpdatedEvent);
+			}
+			
+			
+			/**
+			 * @private
+			 * Handle permission update events loosely.
+			 */
+			private function handlePermissionsUpdatedEvent( event:Event ):void
+			{
+				_canClickMe = csm.hasPermission( CAN_CLICK_ME );
+			}
+			
+			
+			/**
+			 * @private
+			 * Adds the 'can click' permission - the button will show enabled.
+			 */
+			private function addPermission():void
+			{
+				csm.addPermission( CAN_CLICK_ME );
+			}
+			
+			
+			/**
+			 * @private
+			 * Removes the 'can click' permission - the button will grey out (disabled).
+			 */
+			private function removePermission():void
+			{
+				csm.removePermission( CAN_CLICK_ME );	
+			}
+			
+			
+		]]>
+	</mx:Script>
+	
+	<mx:Label text="ComponentSecurityManager: Loose Binding Example" left="30" top="30" fontWeight="bold" fontSize="14"/>
+
+	<!-- our loosely managed component -->
+	<mx:Button y="342" label="click me!" click="Alert.show('you clicked me!');" enabled="{_canClickMe}" horizontalCenter="0" width="100"/>
+
+	<mx:Button y="528" label="remove click permission" click="removePermission();" horizontalCenter="0" width="200"/>
+	<mx:Button y="498" label="add click permission" click="addPermission();" horizontalCenter="0" width="200"/>
+	<mx:Text y="372" text="Click the add / remove buttons below to see the ComponentSecurityManager work on the 'click me!' button." width="228" height="56" textAlign="center" horizontalCenter="0"/>
+	
+</mx:Application>

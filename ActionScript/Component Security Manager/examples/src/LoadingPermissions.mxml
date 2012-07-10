@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+	creationComplete="ccomp();"
+	layout="absolute"
+	backgroundGradientAlphas="[1.0, 1.0]" backgroundGradientColors="[#FFFFFF, #FFEDDC]">
+
+	<mx:Script>
+		<![CDATA[
+		
+		
+			import mx.controls.Alert;
+
+			import com.quilix.managers.ComponentSecurityManager;
+		
+			
+			/**
+			 * @private
+			 * Security manager for this application context.
+			 */
+			private var csm:ComponentSecurityManager;
+			
+			
+			/**
+			 * @private
+			 * Handles creationComplete event - and sets up security.
+			 */
+			private function ccomp():void
+			{
+				csm = ComponentSecurityManager.getInstance();
+			}
+			
+			
+			/**
+			 * @private
+			 * If this were a real login form - you'd be sending the credentials to
+			 * some sort of service for verification. The Event.COMPLETE handler is
+			 * called when the permissions file is loaded.
+			 * 
+			 * FILE: xml/permissions.xml
+			 */
+			private function loadPermissions():void
+			{
+				var req:URLRequest = new URLRequest("xml/permissions.xml");
+				var loader:URLLoader = new URLLoader(req);
+				loader.addEventListener( Event.COMPLETE, handleLoadCompleteEvent, false, 0, true );
+			}
+			
+			
+			/**
+			 * @private
+			 * Typical of a successful login - to process the users permissions. 
+			 * The UI will update as the permissions are loaded.
+			 */
+			private function handleLoadCompleteEvent( event:Event ):void
+			{
+				var loader:URLLoader = event.target as URLLoader;
+				loader.removeEventListener( Event.COMPLETE, handleLoadCompleteEvent );
+				
+				var xml:XML = new XML( loader.data );
+				
+				// For better performance you could add this to an array collection 
+				// and then do a single update with a call to csm.addPermissions...
+				for each ( var permission:XML in xml.elements("permission") )
+					csm.addPermission( permission.@value );
+				
+				// Switch states, hide stuff, switch viewstack, or whatever you 
+				// need to advance the user in the application.
+				loginForm.visible = false;
+				logoutButton.visible = true;
+			}
+			
+			
+			/**
+			 * @private
+			 * When logging out do as the romans do.
+			 */
+			private function clearPermissions():void
+			{
+				csm.removeAllPermissions();
+				
+				loginForm.visible = true;
+				logoutButton.visible = false;
+			}
+			
+			
+		]]>
+	</mx:Script>
+
+	<!-- protecting resources individually with permissions -->
+	<mx:Metadata>
+		[ManageComponents( components="buttonA", permissions="canClickA", restrictions="enabled" )]
+		[ManageComponents( components="buttonB", permissions="canClickB", restrictions="enabled" )]
+		[ManageComponents( components="buttonC", permissions="canClickC", restrictions="enabled" )]
+	</mx:Metadata>
+
+	<mx:Label text="ComponentSecurityManager: Loading Permissions Example" left="30" top="30" fontWeight="bold" fontSize="14"/>
+	
+	<!-- sample login for really doesn't do anything besides trigger the permission load -->
+	<mx:Canvas id="loginForm" width="270" height="148" borderStyle="solid" borderThickness="1" borderColor="#808080" backgroundColor="#FFFFFF" cornerRadius="10" dropShadowEnabled="true" horizontalCenter="0" verticalCenter="-62">
+		<mx:Button x="193" y="114" label="login" fontWeight="normal" click="loadPermissions();"/>
+		<mx:TextInput x="75" y="27" maxChars="10" width="160" borderStyle="solid" borderThickness="1" borderColor="#2F2F2F" text="jdoe"/>
+		<mx:TextInput x="75" y="59" displayAsPassword="true" maxChars="10" width="160" borderStyle="solid" borderThickness="1" borderColor="#2F2F2F" text="imauser"/>
+		<mx:Label x="33" y="29" text="user:"/>
+		<mx:Label x="33" y="61" text="pass:"/>
+	</mx:Canvas>
+
+	<!-- our protected items... which if you will note are disabled on startup -->
+	<mx:Button id="buttonA" label="Button A" horizontalCenter="0" verticalCenter="73" width="100" click="Alert.show('You clicked A!');" enabled="false"/>
+	<mx:Button id="buttonB" label="Button B" horizontalCenter="0" verticalCenter="103" width="100" click="Alert.show('You clicked B!');" enabled="false"/>
+	<mx:Button id="buttonC" label="Button C" horizontalCenter="0" verticalCenter="133" width="100" click="Alert.show('You clicked C!');" enabled="false"/>
+	
+	<mx:Button id="logoutButton" label="logout (removes all permissions)" fontWeight="normal" horizontalCenter="0" verticalCenter="195" visible="false" click="clearPermissions();"/>
+	
+</mx:Application>

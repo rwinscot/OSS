@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application 
+	xmlns:mx="http://www.adobe.com/2006/mxml" 
+	xmlns:components="components.*"
+	creationComplete="ccomp();"
+	layout="absolute" 
+	backgroundGradientAlphas="[1.0, 1.0]" backgroundGradientColors="[#FFFFFF, #FFEDDC]">
+
+	<mx:Script>
+		<![CDATA[
+			
+
+			import mx.controls.Alert;
+			import mx.core.UIComponent;
+
+			import com.quilix.managers.ComponentSecurityManager;
+
+
+			/**
+			 * @private
+			 * Security manager for this application context.
+			 */
+			[Bindable]
+			private var csm:ComponentSecurityManager;
+
+
+			/**
+			 * @private
+			 * Constant for the 'can click custom Button A' permission.
+			 */
+			private const CAN_CLICK_A:String = "canClickComponentButtonA";
+
+
+			/**
+			 * @private
+			 * Constant for the 'can click custom Button B' permission.
+			 */
+			private const CAN_CLICK_B:String = "canClickComponentButtonB";
+
+			
+			
+			/**
+			 * @private
+			 * Handles creationComplete event - and sets up security.
+			 */
+			private function ccomp():void
+			{
+				csm = ComponentSecurityManager.getInstance();
+			}
+			
+			
+			/**
+			 * @private
+			 * Add / remove permissions for the current user for Button A.
+			 */
+			private function toggleButtonPermissionA():void
+			{
+				if ( csm.hasPermission(CAN_CLICK_A) == true )
+				{
+					csm.removePermission(CAN_CLICK_A);
+				}
+				else
+				{
+					csm.addPermission(CAN_CLICK_A);
+				}
+			}					
+
+
+			/**
+			 * @private
+			 * Add / remove permissions for the current user for Button B.
+			 */
+			private function toggleButtonPermissionB():void
+			{
+				if ( csm.hasPermission(CAN_CLICK_B) == true )
+				{
+					csm.removePermission(CAN_CLICK_B);
+				}
+				else
+				{
+					csm.addPermission(CAN_CLICK_B);
+				}
+			}					
+
+			
+		]]>
+	</mx:Script>
+	
+	<!-- custom components in need of some security love -->
+	<components:ComponentButtonA label="Button A (mxml)" width="180" horizontalCenter="0" verticalCenter="-60" click="Alert.show('You clicked custom Button A!');"/>
+	<components:ComponentButtonB label="Button B (ActionScript)" width="180" horizontalCenter="0" verticalCenter="-30" click="Alert.show('You clicked custom Button B!');"/>
+	
+	<mx:CheckBox label="Can click 'Button A' - MXML implementation" horizontalCenter="0" verticalCenter="59" change="toggleButtonPermissionA();"/>
+	<mx:CheckBox label="Can click 'Button B' - ActionScript implementation" horizontalCenter="0" verticalCenter="89" change="toggleButtonPermissionB();"/>
+	
+</mx:Application>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+	creationComplete="ccomp();" 
+	layout="absolute"
+	backgroundGradientAlphas="[1.0, 1.0]" backgroundGradientColors="[#FFFFFF, #FFEDDC]">
+
+	<mx:Script>
+		<![CDATA[
+		
+		
+			import mx.controls.Alert;
+			import mx.core.UIComponent;
+
+			import com.quilix.managers.ComponentSecurityManager;
+
+
+			/**
+			 * @private
+			 * Security manager for this application context.
+			 */
+			private var csm:ComponentSecurityManager;
+
+
+			/**
+			 * @private
+			 * Constant for the 'can click' permission.
+			 */
+			private const CAN_CLICK_A:String = "canClickA";
+			
+			
+			/**
+			 * @private
+			 * Handles creationComplete event - and sets up security.
+			 */
+			private function ccomp():void
+			{
+				csm = ComponentSecurityManager.getInstance();
+			}
+
+			
+			/**
+			 * @private
+			 * Manage / un-manage a specified component - here 
+			 */
+			private function toggleManagement():void
+			{
+				if ( csm.componentExists( buttonA ) == true )
+				{
+					csm.removeComponent( buttonA );
+				}
+				else
+				{
+					csm.addComponent( buttonA, [ CAN_CLICK_A ], [ "enabled" ] );
+				}
+			}
+			
+			
+			/**
+			 * @private
+			 * Add / remove permissions for the current user.
+			 */
+			private function togglePermission():void
+			{
+				if ( csm.hasPermission(CAN_CLICK_A) == true )
+				{
+					csm.removePermission(CAN_CLICK_A);
+				}
+				else
+				{
+					csm.addPermission(CAN_CLICK_A);
+				}
+			}
+			
+		]]>
+	</mx:Script>
+
+	<mx:Label text="ComponentSecurityManager: Programmatic Management" left="30" top="30" fontWeight="bold" fontSize="14"/>
+
+	<!-- component for runtime security example -->
+	<mx:Button id="buttonA" label="Button A" width="100" horizontalCenter="0" verticalCenter="-46" click="Alert.show('You clicked A!');"/>
+	
+	<mx:CheckBox label="manage 'Button A'" change="toggleManagement();" horizontalCenter="0" verticalCenter="53"/>
+	<mx:CheckBox label="has permission 'canClickA'" change="togglePermission();" horizontalCenter="0" verticalCenter="83"/>
+	
+</mx:Application>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" 
+	creationComplete="ccomp();"
+	layout="absolute"
+	backgroundGradientAlphas="[1.0, 1.0]" backgroundGradientColors="[#FFFFFF, #FFEDDC]">
+
+	<mx:Script>
+		<![CDATA[
+
+
+			import mx.controls.Alert;
+			import mx.core.UIComponent;
+
+			import com.quilix.managers.ComponentSecurityManager;
+
+
+			/**
+			 * @private
+			 * Security manager for this application context. Added [Bindable] to
+			 * get rid of the warning... you can use it with or without. 
+			 */
+			[Bindable]
+			private var csm:ComponentSecurityManager;
+
+
+			/**
+			 * @private
+			 * Constant for the 'can click' permission.
+			 */
+			private const CAN_CLICK_A:String = "canClickA";
+			
+			
+			/**
+			 * @private
+			 * Handles creationComplete event - and sets up security.
+			 */
+			private function ccomp():void
+			{
+				csm = ComponentSecurityManager.getInstance();
+			}
+			
+			
+			/**
+			 * @private
+			 * Add / remove permissions for the current user.
+			 */
+			private function togglePermission():void
+			{
+				if ( csm.hasPermission(CAN_CLICK_A) == true )
+				{
+					csm.removePermission(CAN_CLICK_A);
+				}
+				else
+				{
+					csm.addPermission(CAN_CLICK_A);
+				}
+			}			
+			
+		]]>
+	</mx:Script>
+
+	<!-- notice that restrictions are missing from the metadata - restrictions can be managed via binding -->
+	<mx:Metadata>
+		[ManageComponents( components="buttonA", permissions="canClickA" )]
+	</mx:Metadata>
+
+	<mx:Label text="ComponentSecurityManager: Bound Restrictions" left="30" top="30" fontWeight="bold" fontSize="14"/>
+
+	<!-- component with restriction via binding - notice what is between the braces on the enabled property -->
+	<mx:Button id="buttonA" label="Button A" enabled="{csm.hasPermission(CAN_CLICK_A)}" horizontalCenter="0" verticalCenter="-18" width="100" click="Alert.show('You clicked A!');"/>
+	
+	<mx:CheckBox label="Can click 'Button A'" change="togglePermission();" horizontalCenter="2" verticalCenter="50"/>
+	
+</mx:Application>

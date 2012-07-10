@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<permissions>
+	<permission value="canClickA"/>
+	<permission value="canClickB"/>
+	<permission value="canClickC"/>
+</permissions>

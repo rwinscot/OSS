@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Button xmlns:mx="http://www.adobe.com/2006/mxml" enabled="false">
+	
+	<!-- anything that you intend to secure should be secure from the start - note the enabled property above? -->
+	<mx:Metadata>
+		[ManageComponents( components="this", permissions="canClickComponentButtonA", restrictions="enabled" )]
+	</mx:Metadata>	
+	
+</mx:Button>

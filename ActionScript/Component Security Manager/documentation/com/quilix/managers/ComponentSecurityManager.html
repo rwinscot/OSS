@@ -1,0 +1,577 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
+<link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
+<meta content="ComponentSecurityManager,com.quilix.managers.ComponentSecurityManager,version,addComponent,addPermission,componentExists,getInstance,hasPermission,hasPermissions,init,removeAllPermissions,removeComponent,removePermission,setPermissions" name="keywords">
+<title>com.quilix.managers.ComponentSecurityManager</title>
+</head>
+<body>
+<script type="text/javascript" language="javascript" src="../../../asdoc.js"></script><script type="text/javascript" language="javascript" src="../../../cookies.js"></script><script type="text/javascript" language="javascript">
+<!--
+				asdocTitle = 'ComponentSecurityManager - API Documentation';
+				var baseRef = '../../../';
+				window.onload = configPage;
+			--></script>
+<table style="display:none" id="titleTable" cellspacing="0" cellpadding="0" class="titleTable">
+<tr>
+<td align="left" class="titleTableTitle">API Documentation</td><td align="right" class="titleTableTopNav"><a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../package-summary.html">All&nbsp;Packages</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../class-summary.html">All&nbsp;Classes</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../index-list.html')" href="../../../all-index-A.html">Index</a>&nbsp;|&nbsp;<a href="../../../index.html?com/quilix/managers/ComponentSecurityManager.html&amp;com/quilix/managers/class-list.html" id="framesLink1">Frames</a><a onclick="parent.location=document.location" href="" style="display:none" id="noFramesLink1">No&nbsp;Frames</a></td><td rowspan="3" align="right" class="titleTableLogo"><img alt="Adobe Logo" title="Adobe Logo" class="logoImage" src="../../../images/logo.jpg"></td>
+</tr>
+<tr class="titleTableRow2">
+<td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;ComponentSecurityManager</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#propertySummary">Properties</a>&nbsp;| <a href="#methodSummary">Methods</a>&nbsp;| <a href="#eventSummary">Events</a></td>
+</tr>
+<tr class="titleTableRow3">
+<td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<script type="text/javascript" language="javascript">
+<!--
+if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Class ComponentSecurityManager"); titleBar_setSubNav(false,true,false,false,true,false,true,false,false,false,false,false,false,false);}
+--></script>
+<div class="MainContent">
+<table cellspacing="0" cellpadding="0" class="classHeaderTable">
+<tr>
+<td class="classHeaderTableLabel">Package</td><td><a onclick="javascript:loadClassListFrame('class-list.html')" href="package-detail.html">com.quilix.managers</a></td>
+</tr>
+<tr>
+<td class="classHeaderTableLabel">Class</td><td class="classSignature">public class ComponentSecurityManager</td>
+</tr>
+<tr>
+<td class="classHeaderTableLabel">Inheritance</td><td class="inheritanceList">ComponentSecurityManager <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../../images/inherit-arrow.gif"> flash.events.EventDispatcher</td>
+</tr>
+</table>
+<p></p>
+  Uses the principle of least privilege to restrict access to or visibility of 
+  UIComponents. The ComponentSecurityManager should be addedToStage as early as
+  possible in the application init cycle - to prevent components from side
+  stepping security restrictions.
+  
+  <pre>
+  
+  private var csm:ComponentSecurityManager = ComponentSecurityManager.getInstance();
+  </pre>
+  
+  <p>
+  Be aware that although this class in implemented as a singleton... conflicts
+  may arise when using modules or extended security contexts. After initialization, 
+  the ComponentSecurityManager via the root SystemManager will process security 
+  restrictions for UIComponents as they are added to the stage. 
+  </p>
+  
+  <p>
+  The components field contains a comma separated list of your component ids, the permissions
+  field contains a comma separated list of your required permissions, and the restrictions field 
+  contains a comma separated list of your components restricted properties. The enabled, visible, 
+  and includeInLayout are supported along with any other Boolean UIComponent property. Don't get 
+  too fancy... or you'll a-splode yourself.
+  </p>
+  
+  <p>
+  Managed MXML components should be annotated as:
+  </p>
+  
+  <pre>
+  
+   &lt;mx:Metadata&gt;
+     [ManageComponents( components="this", permissions="foo", restrictions="visible,includeInLayout" )]
+   &lt;/mx:Metadata&gt;
+  </pre>
+  
+  Managed ActionScript classes that extend UIComponent should be annotated as:
+  
+  <pre>
+  
+  [ManageComponents( components="this", permissions="foo", restrictions="visible,includeInLayout" )]
+  public class foo
+  {
+  ...
+  </pre>
+  
+  You can also use a loose binding method to manage a UIComponent or non-UIComponent.
+  
+  <pre>
+  
+  // Within your class...
+  private var csm:ComponentSecurityManager = ComponentSecurityManager.getInstance();
+  
+  // Binding source
+  [Bindable]
+  private var _enabled:Boolean = false;
+  
+  // Standard creation complete handler to add event listener.
+  private function ccomp():void
+  {
+      csm.addEventListener("permissionsUpdated", handlePermissionUpdatedEvent);
+  }
+  
+  // Permissions changed handler - will toggle button enabled as 'foo' permission
+  // is added or removed.
+  private function handlePermissionUpdatedEvent( event:Event ):void
+  {
+      _enabled = csm.hasPermission( "foo" );
+  }
+  
+  &lt;mx:Button label="click me!" click="Alert.show('you clicked me!');" enabled="{_enabled}"/&gt;
+  </pre>
+  <p></p>
+<br>
+<hr>
+</div>
+<a name="propertySummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Public Properties</div>
+<table id="summaryTableProperty" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#version">version</a> : String<div class="summaryTableDescription">[read-only]
+ Software version expressed as major, minor, point, and build #.</div>
+</td><td class="summaryTableOwnerCol">ComponentSecurityManager</td>
+</tr>
+</table>
+</div>
+<a name="methodSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Public Methods</div>
+<table id="summaryTableMethod" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#ComponentSecurityManager()">ComponentSecurityManager</a>(enforcer:ComponentSecurityManagerEnforcer)</div>
+<div class="summaryTableDescription">
+   Uses a scope constrained Constructor and ensures that the only 
+   class eligible to call the ComponentSecurityManager is itself.</div>
+</td><td class="summaryTableOwnerCol">ComponentSecurityManager</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#addComponent()">addComponent</a>(component:UIComponent, permissions:Array, restrictions:Array):<a href="../ro/ManagedComponentRO.html">ManagedComponentRO</a>
+</div>
+<div class="summaryTableDescription">
+   Adds security / restrictions to the specified component.</div>
+</td><td class="summaryTableOwnerCol">ComponentSecurityManager</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#addPermission()">addPermission</a>(permission:String):void</div>
+<div class="summaryTableDescription">
+   Grants additional access to managed components with the specified
+   permission.</div>
+</td><td class="summaryTableOwnerCol">ComponentSecurityManager</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#componentExists()">componentExists</a>(comp:UIComponent):Boolean</div>
+<div class="summaryTableDescription">
+   Checks to see if a specified component is already being managed.</div>
+</td><td class="summaryTableOwnerCol">ComponentSecurityManager</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getInstance()">getInstance</a>():<a href="../managers/ComponentSecurityManager.html">ComponentSecurityManager</a>
+</div>
+<div class="summaryTableDescription">[static]
+   The 'single' access point for your ComponentSecurityManager.</div>
+</td><td class="summaryTableOwnerCol">ComponentSecurityManager</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#hasPermission()">hasPermission</a>(permission:String):Boolean</div>
+<div class="summaryTableDescription">
+   Determines if the current user has the specified permission.</div>
+</td><td class="summaryTableOwnerCol">ComponentSecurityManager</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#hasPermissions()">hasPermissions</a>(permissions:Array):Boolean</div>
+<div class="summaryTableDescription">
+   Determines if the current user has the specified permissions.</div>
+</td><td class="summaryTableOwnerCol">ComponentSecurityManager</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#init()">init</a>():void</div>
+<div class="summaryTableDescription">
+   Called internally as ComponentSecurityManager is instantiated.</div>
+</td><td class="summaryTableOwnerCol">ComponentSecurityManager</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#removeAllPermissions()">removeAllPermissions</a>():void</div>
+<div class="summaryTableDescription">
+   Removes all permissions for the current user.</div>
+</td><td class="summaryTableOwnerCol">ComponentSecurityManager</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#removeComponent()">removeComponent</a>(component:UIComponent):void</div>
+<div class="summaryTableDescription">
+   Removes security / restrictions and restores component.</div>
+</td><td class="summaryTableOwnerCol">ComponentSecurityManager</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#removePermission()">removePermission</a>(permission:String):void</div>
+<div class="summaryTableDescription">
+   Reduces access to or removes managed components with the specified
+   permission.</div>
+</td><td class="summaryTableOwnerCol">ComponentSecurityManager</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#setPermissions()">setPermissions</a>(permissions:ArrayCollection):void</div>
+<div class="summaryTableDescription">
+   Set the collective permissions for the current user.</div>
+</td><td class="summaryTableOwnerCol">ComponentSecurityManager</td>
+</tr>
+</table>
+</div>
+<a name="eventSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Events</div>
+<table id="summaryTableEvent" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Event</th><th>Summary</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#event:permissionsUpdated">permissionsUpdated</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">&nbsp;</td><td class="summaryTableOwnerCol">ComponentSecurityManager</td>
+</tr>
+</table>
+</div>
+<script type="text/javascript" language="javascript">
+<!--
+showHideInherited();
+--></script>
+<div class="MainContent">
+<a name="propertyDetail"></a>
+<div class="detailSectionHeader">Property detail</div>
+<a name="version"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">version</td><td class="detailHeaderType">property</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>version:String</code>&nbsp;&nbsp;[read-only]<p>
+ Software version expressed as major, minor, point, and build #.
+ 
+ </p><p>The default value is <code>1.0.0.37</code>.</p>
+<span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get version():String</code>
+<br>
+</div>
+<a name="constructorDetail"></a>
+<div class="detailSectionHeader">Constructor detail</div>
+<a name="ComponentSecurityManager()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">ComponentSecurityManager</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">constructor</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function ComponentSecurityManager(enforcer:ComponentSecurityManagerEnforcer)</code><p>
+   Uses a scope constrained Constructor and ensures that the only 
+   class eligible to call the ComponentSecurityManager is itself.
+   </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">enforcer</span>:ComponentSecurityManagerEnforcer</code></td>
+</tr>
+</table>
+</div>
+<a name="methodDetail"></a>
+<div class="detailSectionHeader">Method detail</div>
+<a name="addComponent()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">addComponent</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function addComponent(component:UIComponent, permissions:Array, restrictions:Array):<a href="../ro/ManagedComponentRO.html">ManagedComponentRO</a></code><p>
+   Adds security / restrictions to the specified component.
+   
+   </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">component</span>:UIComponent</code> &mdash; The <code>UIComponent</code> to secure.
+   </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">permissions</span>:Array</code> &mdash; An <code>Array</code> of permissions to apply to the component.
+   </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">restrictions</span>:Array</code> &mdash; An <code>Array</code> of restrictions to apply to the component.
+   </td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code><a href="../ro/ManagedComponentRO.html">ManagedComponentRO</a></code> &mdash; 
+                        Returns a <code>ManagedComponentRO</code> (reference object) if successful.
+   
+   
+                        
+                     </td>
+</tr>
+</table>
+</div>
+<a name="addPermission()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">addPermission</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function addPermission(permission:String):void</code><p>
+   Grants additional access to managed components with the specified
+   permission.
+   
+   </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">permission</span>:String</code> &mdash; <code>String</code> token granting access to 
+   specified / managed components.
+   </td>
+</tr>
+</table>
+</div>
+<a name="componentExists()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">componentExists</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function componentExists(comp:UIComponent):Boolean</code><p>
+   Checks to see if a specified component is already being managed. Best
+   used to track components identified as 'this.'
+   
+   </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">comp</span>:UIComponent</code> &mdash; The <code>UIComponent</code> to check for.
+   </td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code> &mdash; Returns <code>true</code> if the component is found or 
+   <code>false</code> if not.
+   </td>
+</tr>
+</table>
+</div>
+<a name="getInstance()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getInstance</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function getInstance():<a href="../managers/ComponentSecurityManager.html">ComponentSecurityManager</a></code><p>
+   The 'single' access point for your ComponentSecurityManager.
+   
+   </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code><a href="../managers/ComponentSecurityManager.html">ComponentSecurityManager</a></code></td>
+</tr>
+</table>
+<br>
+<span class="label">Example</span>
+<br>   <div class='listing'><pre>
+   
+   
+   private var csm:ComponentSecurityManager = ComponentSecurityManager.getInstance();
+   
+   </pre></div>
+   <p></p>
+</div>
+<a name="hasPermission()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">hasPermission</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function hasPermission(permission:String):Boolean</code><p>
+   Determines if the current user has the specified permission.
+   
+   </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">permission</span>:String</code> &mdash; <code>String</code>
+   </td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code> &mdash; Returns <code>true</code> if the user has the specified
+   permission else it will return <code>false</code>.
+   </td>
+</tr>
+</table>
+</div>
+<a name="hasPermissions()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">hasPermissions</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function hasPermissions(permissions:Array):Boolean</code><p>
+   Determines if the current user has the specified permissions.
+   
+   </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">permissions</span>:Array</code> &mdash; <code>Array</code>
+   </td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code> &mdash; Returns <code>true</code> if the user has all the specified 
+   permissions else it will return <code>false</code>.
+   </td>
+</tr>
+</table>
+</div>
+<a name="init()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">init</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function init():void</code><p>
+   Called internally as ComponentSecurityManager is instantiated. Adds an event listener to 
+   the Application.application.systemManager to keep track of all UIComponents that are added.
+   </p></div>
+<a name="removeAllPermissions()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">removeAllPermissions</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function removeAllPermissions():void</code><p>
+   Removes all permissions for the current user.
+   </p></div>
+<a name="removeComponent()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">removeComponent</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function removeComponent(component:UIComponent):void</code><p>
+   Removes security / restrictions and restores component.
+   
+   </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">component</span>:UIComponent</code> &mdash; The <code>UIComponent</code> to remove. 
+   </td>
+</tr>
+</table>
+</div>
+<a name="removePermission()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">removePermission</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function removePermission(permission:String):void</code><p>
+   Reduces access to or removes managed components with the specified
+   permission.
+   
+   </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">permission</span>:String</code> &mdash; <code>String</code> token that removes
+   previously granted access to specified / managed components.
+   </td>
+</tr>
+</table>
+</div>
+<a name="setPermissions()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">setPermissions</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function setPermissions(permissions:ArrayCollection):void</code><p>
+   Set the collective permissions for the current user.
+   
+   </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">permissions</span>:ArrayCollection</code> &mdash; An <code>ArrayCollection</code> of permissions.
+   </td>
+</tr>
+</table>
+</div>
+<div class="detailSectionHeader">Event detail</div>
+<a name="event:permissionsUpdated"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">permissionsUpdated</td><td class="detailHeaderType">event&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<span class="label">Event object type: </span><a href=""><code>flash.events.Event</code></a>
+<br>
+<p></p>
+</div>
+<br>
+<br>
+<hr>
+<br>
+<p></p>
+<center class="copyright"> 
+</center>
+</div>
+</body>
+</html>
+<!-- -->

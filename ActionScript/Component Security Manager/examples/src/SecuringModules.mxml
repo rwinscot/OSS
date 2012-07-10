@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" 
+ 	creationComplete="ccomp();"
+ 	layout="absolute"
+ 	backgroundGradientAlphas="[1.0, 1.0]" backgroundGradientColors="[#FFFFFF, #FFEDDC]">
+	
+	<mx:Script>
+		<![CDATA[
+
+
+			import mx.collections.ArrayCollection;
+		
+			import com.quilix.managers.ComponentSecurityManager;
+
+
+			/**
+			 * @private
+			 * Constant permission used to determine module visibility/layout.
+			 */
+			private const CAN_SEE_MODULES:String = "canSeeModules";
+			
+		
+			/**
+			 * @private
+			 * Security manager for this application context.
+			 */
+			private var csm:ComponentSecurityManager;
+		
+			
+			/**
+			 * @private
+			 * Handles creationComplete event - and sets up security.
+			 */
+			private function ccomp():void
+			{
+				csm = ComponentSecurityManager.getInstance();
+				toggleModuleSecurity();
+			}
+			
+
+			/**
+			 * @private
+			 * Toggles visibility/layout of module.
+			 */
+			private function toggleModuleSecurity():void
+			{
+				
+				if ( csm.hasPermission( CAN_SEE_MODULES ) == true )
+				{
+					csm.removePermission( CAN_SEE_MODULES );
+				}
+				else
+				{
+					csm.addPermission( CAN_SEE_MODULES );
+				}
+			}
+			
+			
+			/**
+			 * @private
+			 * Toggles the enabled property of button 'B' within the module. You
+			 * don't need to use constants... but probably should to keep things
+			 * straight.
+			 */
+			private function toggleButtonEnabled():void
+			{
+				if ( csm.hasPermission( "canClickB" ) == true )
+				{
+					csm.removePermission( "canClickB" );
+				}
+				else
+				{
+					csm.addPermission( "canClickB" );
+				}
+			}
+			
+			
+		]]>
+	</mx:Script>
+
+	<mx:Label text="ComponentSecurityManager: Securing Modules Example" left="30" top="30" fontWeight="bold" fontSize="14"/>
+
+	<!-- the managed module -->	
+	<mx:ModuleLoader width="402" height="302" horizontalCenter="0" verticalCenter="0" url="modules/SampleModule.swf" borderStyle="solid" borderThickness="1" borderColor="#808080" backgroundColor="#FFFFFF"/>
+
+	<mx:Button label="toggle module visible/layout" click="toggleModuleSecurity();" horizontalCenter="0" verticalCenter="170" width="200"/>
+	<mx:Button label="toggle button b enabled" click="toggleButtonEnabled();" horizontalCenter="0" width="200" verticalCenter="200"/>
+	
+</mx:Application>
