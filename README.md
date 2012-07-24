@@ -15,5 +15,9 @@ ActionScript
 * Component Security Manager: application security can be tricky… here's a library that can help simplify the process.
 
 
+Arduino
+---
+* ATtiny1634: Core to program the ATtiny1634 with the Arduino IDE.
+
 
 More projects coming soon!
